@@ -56,12 +56,7 @@ def getStationsDailyImages(stations, data):
 		allCounts = np.insert(allCounts, 0, counts)
 		allCounts = allCounts.flatten()
 	
-	uniqueCounts = np.unique(allCounts)
-	uniqueCounts = np.sort(uniqueCounts, axis=None)
-	countOccurances = [np.count_nonzero(uniqueCounts == i) for i in uniqueCounts]
-	countsDict = dict(zip(uniqueCounts, countOccurances))
-	countsDF = pd.DataFrame(countsDict, index=[0])
-	return countsDF
+	return allCounts
 
 #def 
 
@@ -85,11 +80,20 @@ topTenBobcatStations = topStations(bobcatStationsSorted, 10)
 print("Top Ten Puma Stations: ", topTenPumaStations)
 print("Top Ten Bobcat Stations: ", topTenBobcatStations)
 
-pumaTimestampsDF = getStationsDailyImages(topTenPumaStations, pumaDict)
-#bobcatTimestampsDF = getStationsDailyImages(topTenBobcatStations, bobcatDict)
+#Retrieve the number of images taken on a day by camera traps given the top ten stations for each species
+pumaTimestampsARR = getStationsDailyImages(topTenPumaStations, pumaDict)
+bobcatTimestampsARR = getStationsDailyImages(topTenBobcatStations, bobcatDict)
 
-print(pumaTimestampsDF)
+#Plot puma data
+plt.hist(pumaTimestampsARR, edgecolor='red', bins=np.arange(min(pumaTimestampsARR), max(pumaTimestampsARR + 10), 10))
+plt.title("Daily Images Taken by Station: Highest Puma Frequencies")
+plt.xlabel("Number of Daily Images Taken")
+plt.ylabel("Frequency")
+plt.savefig("pumaFreq.png")
 
-pumaHist = pumaTimestampsDF.plot.hist(bins=5)
-print(pumaHist)
-pumaHist.figure.savefig("figure.png")
+#Plot bobcat data
+plt.hist(bobcatTimestampsARR, edgecolor='red', bins=np.arange(min(bobcatTimestampsARR), max(bobcatTimestampsARR + 10), 10))
+plt.title("Daily Images Taken by Station: Highest Bobcat Frequencies")
+plt.xlabel("Number of Daily Images Taken")
+plt.ylabel("Frequency")
+plt.savefig("bobcatFreq.png")
